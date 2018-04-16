@@ -1,5 +1,6 @@
 import '../scss/leaflet-measure.scss';
 
+import './leaflet.1.3.1';
 import template from 'lodash/template';
 
 import units from './units';
@@ -392,6 +393,16 @@ L.Control.Measure = L.Control.extend({
     resultFeature.bindPopup(popupContainer, this.options.popupOptions);
     if (resultFeature.getBounds) {
       resultFeature.openPopup(resultFeature.getBounds().getCenter());
+
+      // TODO переопределен участок кода по отобоажению попа окна с координатами
+      const popup = document.querySelector('.layer-measure-resultarea.leaflet-interactive');
+      const renderPopup = function(resultFeature) {
+        return function() {
+          resultFeature.closePopup();
+          resultFeature.openPopup(resultFeature.getBounds().getCenter());
+        };
+      };
+      popup.addEventListener('click', renderPopup(resultFeature));
     } else if (resultFeature.getLatLng) {
       resultFeature.openPopup(resultFeature.getLatLng());
     }
